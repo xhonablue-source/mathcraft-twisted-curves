@@ -18,7 +18,40 @@ st.markdown("""
 
 # Helper function to create polynomial string from zeros
 def zeros_to_polynomial_string(zeros):
-    """Convert list of zeros to polynomial string representation"""
+    """Convert list of zeros to clean polynomial string representation"""
+    
+    def format_coefficient(coef, power, is_first=False):
+        """Format a single term with proper signs and spacing"""
+        if coef == 0:
+            return ""
+        
+        # Handle the coefficient
+        if power == 0:  # Constant term
+            if coef > 0 and not is_first:
+                return f" + {coef:g}"
+            else:
+                return f"{coef:g}"
+        elif power == 1:  # Linear term
+            if coef == 1:
+                coef_str = "" if is_first else " + "
+            elif coef == -1:
+                coef_str = "-" if is_first else " - "
+            elif coef > 0:
+                coef_str = f"{coef:g}" if is_first else f" + {coef:g}"
+            else:
+                coef_str = f"{coef:g}" if is_first else f" - {abs(coef):g}"
+            return f"{coef_str}x"
+        else:  # Higher powers
+            if coef == 1:
+                coef_str = "" if is_first else " + "
+            elif coef == -1:
+                coef_str = "-" if is_first else " - "
+            elif coef > 0:
+                coef_str = f"{coef:g}" if is_first else f" + {coef:g}"
+            else:
+                coef_str = f"{coef:g}" if is_first else f" - {abs(coef):g}"
+            return f"{coef_str}x^{power}"
+    
     if len(zeros) == 2:
         a, b = zeros
         # (x-a)(x-b) = x² - (a+b)x + ab
@@ -27,29 +60,13 @@ def zeros_to_polynomial_string(zeros):
         coef_x0 = a * b
         
         terms = []
-        if coef_x2 != 0:
-            if coef_x2 == 1:
-                terms.append("x^2")
-            elif coef_x2 == -1:
-                terms.append("-x^2")
-            else:
-                terms.append(f"{coef_x2}x^2")
-        
+        terms.append(format_coefficient(coef_x2, 2, True))
         if coef_x1 != 0:
-            if coef_x1 > 0 and terms:
-                terms.append(f"+{coef_x1}x" if coef_x1 != 1 else "+x")
-            elif coef_x1 < 0:
-                terms.append(f"{coef_x1}x" if coef_x1 != -1 else "-x")
-            else:
-                terms.append("x" if coef_x1 == 1 else f"{coef_x1}x")
-        
+            terms.append(format_coefficient(coef_x1, 1))
         if coef_x0 != 0:
-            if coef_x0 > 0 and terms:
-                terms.append(f"+{coef_x0}")
-            else:
-                terms.append(f"{coef_x0}")
+            terms.append(format_coefficient(coef_x0, 0))
         
-        return "".join(terms) if terms else "0"
+        return "".join(terms) if any(terms) else "0"
     
     elif len(zeros) == 3:
         a, b, c = zeros
@@ -60,44 +77,29 @@ def zeros_to_polynomial_string(zeros):
         coef_x0 = -a*b*c
         
         terms = []
-        if coef_x3 != 0:
-            terms.append("x^3" if coef_x3 == 1 else f"{coef_x3}x^3")
-        
+        terms.append(format_coefficient(coef_x3, 3, True))
         if coef_x2 != 0:
-            if coef_x2 > 0 and terms:
-                terms.append(f"+{coef_x2}x^2" if coef_x2 != 1 else "+x^2")
-            elif coef_x2 < 0:
-                terms.append(f"{coef_x2}x^2" if coef_x2 != -1 else "-x^2")
-            else:
-                terms.append("x^2" if coef_x2 == 1 else f"{coef_x2}x^2")
-        
+            terms.append(format_coefficient(coef_x2, 2))
         if coef_x1 != 0:
-            if coef_x1 > 0 and terms:
-                terms.append(f"+{coef_x1}x" if coef_x1 != 1 else "+x")
-            elif coef_x1 < 0:
-                terms.append(f"{coef_x1}x" if coef_x1 != -1 else "-x")
-            else:
-                terms.append("x" if coef_x1 == 1 else f"{coef_x1}x")
-        
+            terms.append(format_coefficient(coef_x1, 1))
         if coef_x0 != 0:
-            if coef_x0 > 0 and terms:
-                terms.append(f"+{coef_x0}")
-            else:
-                terms.append(f"{coef_x0}")
+            terms.append(format_coefficient(coef_x0, 0))
         
-        return "".join(terms) if terms else "0"
+        return "".join(terms) if any(terms) else "0"
     
     elif len(zeros) == 4:
-        # For 4 zeros, just show the factored form
+        # For 4 zeros, show clean factored form
         factor_terms = []
         for z in zeros:
-            if z >= 0:
-                factor_terms.append(f"(x-{z})")
+            if z == 0:
+                factor_terms.append("x")
+            elif z > 0:
+                factor_terms.append(f"(x - {z:g})")
             else:
-                factor_terms.append(f"(x+{abs(z)})")
+                factor_terms.append(f"(x + {abs(z):g})")
         return "".join(factor_terms)
     
-    return "Complex polynomial"
+    return "f(x)"
 
 # --- MODE SWITCH ---
 st.subheader("🛠️ Choose Input Mode")
@@ -154,8 +156,70 @@ else:
     t = np.linspace(-6, 6, 400)
     f_t = a*t**3 + b*t**2 + c*t + d
 
-    # Display expression
-    st.latex(f"f(x) = {a}x^3 + {b}x^2 + {c}x + {d}")
+    # Display expression with better formatting
+    def format_polynomial_display(a, b, c, d):
+        """Format polynomial coefficients into clean mathematical expression"""
+        terms = []
+        
+        # x³ term
+        if a != 0:
+            if a == 1:
+                terms.append("x^3")
+            elif a == -1:
+                terms.append("-x^3")
+            else:
+                terms.append(f"{a:g}x^3")
+        
+        # x² term
+        if b != 0:
+            if b > 0 and terms:
+                if b == 1:
+                    terms.append(" + x^2")
+                else:
+                    terms.append(f" + {b:g}x^2")
+            elif b < 0:
+                if b == -1:
+                    terms.append(" - x^2")
+                else:
+                    terms.append(f" - {abs(b):g}x^2")
+            else:  # b != 0 and no existing terms
+                if b == 1:
+                    terms.append("x^2")
+                else:
+                    terms.append(f"{b:g}x^2")
+        
+        # x term
+        if c != 0:
+            if c > 0 and terms:
+                if c == 1:
+                    terms.append(" + x")
+                else:
+                    terms.append(f" + {c:g}x")
+            elif c < 0:
+                if c == -1:
+                    terms.append(" - x")
+                else:
+                    terms.append(f" - {abs(c):g}x")
+            else:  # c != 0 and no existing terms
+                if c == 1:
+                    terms.append("x")
+                else:
+                    terms.append(f"{c:g}x")
+        
+        # constant term
+        if d != 0:
+            if d > 0 and terms:
+                terms.append(f" + {d:g}")
+            elif d < 0:
+                terms.append(f" - {abs(d):g}")
+            else:  # d != 0 and no existing terms
+                terms.append(f"{d:g}")
+        
+        result = "".join(terms) if terms else "0"
+        return result
+    
+    polynomial_display = format_polynomial_display(a, b, c, d)
+    st.latex(f"f(x) = {polynomial_display}")
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=t, y=f_t, mode='lines', name='f(x)', line=dict(width=3)))
