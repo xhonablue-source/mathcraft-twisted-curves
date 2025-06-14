@@ -1,2 +1,7 @@
-# mathcraft-twisted-curves
-graphing polynomial functions
+app.py (your Streamlit code)
+
+README.md
+
+requirements.txt
+
+.gitignore
