@@ -16,23 +16,44 @@ st.markdown("""
 <hr>
 """, unsafe_allow_html=True)
 
-# Define the polynomial and its factors
-st.subheader("🔍 Polynomial Example")
-st.latex(r"f(x) = (x + 2)(x - 1)(x - 3)(x - 4)")
+# --- INTERACTIVE ROOTS SECTION ---
+st.subheader("🎮 Move the Zeros - Watch the Polynomial Change")
 
-# Generate x and y values
-x_vals = np.linspace(-5, 6, 400)
-y_vals = (x_vals + 2)*(x_vals - 1)*(x_vals - 3)*(x_vals - 4)
+st.markdown("""
+Use the sliders below to move the x-intercepts (zeros) of the polynomial. You can also choose how many factors to include, and reset them back to default.
+""")
 
-# Create plot
+# Select number of factors
+num_factors = st.selectbox("How many factors do you want?", [2, 3, 4], index=2)
+
+# Default values
+default_zeros = [-2.0, 1.0, 3.0, 4.0]
+zeros = []
+
+# Reset button
+if st.button("🔄 Reset Zeros to Default"):
+    st.experimental_rerun()
+
+# Show sliders based on selected number of factors
+for i in range(num_factors):
+    zero = st.slider(f"Zero {i+1} (x = root_{i+1})", -5.0, 5.0, default_zeros[i], step=0.1)
+    zeros.append(zero)
+
+# Generate values
+t = np.linspace(-6, 6, 400)
+f_t = np.ones_like(t)
+for z in zeros:
+    f_t *= (t - z)
+
+# Plot dynamic polynomial
 fig = go.Figure()
-fig.add_trace(go.Scatter(x=x_vals, y=y_vals, mode='lines', name='f(x)', line=dict(width=3)))
-fig.add_trace(go.Scatter(x=[-2, 1, 3, 4], y=[0, 0, 0, 0], mode='markers+text', name='Zeros',
+fig.add_trace(go.Scatter(x=t, y=f_t, mode='lines', name='f(x)', line=dict(width=3)))
+fig.add_trace(go.Scatter(x=zeros, y=[0]*len(zeros), mode='markers+text', name='Zeros',
                          marker=dict(size=10, color='red'),
-                         text=['x = -2', 'x = 1', 'x = 3', 'x = 4'],
+                         text=[f"x = {round(z,1)}" for z in zeros],
                          textposition='top center'))
 
-fig.update_layout(title="Graph of f(x) = (x + 2)(x - 1)(x - 3)(x - 4)",
+fig.update_layout(title="Graph of f(x) = Product of (x - root)",
                   xaxis_title="x",
                   yaxis_title="f(x)",
                   height=500)
