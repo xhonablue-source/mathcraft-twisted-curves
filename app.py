@@ -16,6 +16,19 @@ st.markdown("""
 <hr>
 """, unsafe_allow_html=True)
 
+# Common Core Standards & Resources
+st.markdown("""
+### 📚 **Common Core Standards Alignment**
+- **A-APR.B.3**: Identify zeros of polynomials when suitable factorizations are available
+- **F-IF.C.7c**: Graph polynomial functions, identifying zeros when suitable factorizations are available
+- **A-SSE.A.2**: Use the structure of an expression to identify ways to rewrite it
+
+### 🔗 **Additional Resources**
+- 📖 [Khan Academy: Polynomial Factors and Graphs](https://www.khanacademy.org/math/algebra2/x2ec2f6f830c9fb89:poly-graphs)
+- 🎯 [IXL: Find the roots of factored polynomials](https://www.ixl.com/math/algebra-2/find-the-roots-of-factored-polynomials)
+- 📊 [Khan Academy: Zeros of polynomials](https://www.khanacademy.org/math/algebra2/x2ec2f6f830c9fb89:poly-graphs/x2ec2f6f830c9fb89:zeros-of-polynomials/v/polynomial-zeros-introduction)
+""", unsafe_allow_html=True)
+
 # Helper function to create polynomial string from zeros
 def zeros_to_polynomial_string(zeros):
     """Convert list of zeros to clean polynomial string representation"""
@@ -275,7 +288,19 @@ For example:
 They are connected, but not interchangeable.
 
 🧪 **Challenge:** What factor corresponds to a zero at \\( x = 5 \\)?
+
+### 📚 **Practice More:**
+- 🎯 [IXL: Factor polynomials using the GCF](https://www.ixl.com/math/algebra-1/factor-polynomials-using-the-gcf)
+- 📖 [Khan Academy: Factoring polynomials by grouping](https://www.khanacademy.org/math/algebra/x2f8bb11595b61c86:quadratics-multiplying-factoring/x2f8bb11595b61c86:factoring-quadratics-2/v/factoring-by-grouping)
+- 🎯 [IXL: Solve polynomial equations](https://www.ixl.com/math/algebra-2/solve-polynomial-equations)
 """)
+
+# Common Core alignment for this section
+st.markdown("""
+<div style='background-color: #f0f8ff; padding: 10px; border-radius: 5px; margin: 10px 0;'>
+<strong>📋 Standards:</strong> A-APR.B.3, A-SSE.A.2 - Understanding the relationship between factors and zeros
+</div>
+""", unsafe_allow_html=True)
 
 # --- EXTRA: Twisted S-Curve ---
 st.markdown("""
@@ -309,4 +334,16 @@ Think of it like this:
 - The **top left** is **diving into the paper**.
 
 A small term like \\( +x \\) creates major shape changes near the origin.
+
+### 🎓 **Explore Further:**
+- 📖 [Khan Academy: Transforming polynomial functions](https://www.khanacademy.org/math/algebra2/x2ec2f6f830c9fb89:poly-graphs/x2ec2f6f830c9fb89:poly-end-behavior/v/polynomial-end-behavior)
+- 🎯 [IXL: Graph polynomial functions](https://www.ixl.com/math/algebra-2/graph-polynomial-functions)
+- 📊 [Khan Academy: End behavior of polynomial functions](https://www.khanacademy.org/math/algebra2/x2ec2f6f830c9fb89:poly-graphs/x2ec2f6f830c9fb89:poly-end-behavior/v/polynomial-end-behavior)
+
+<div style='background-color: #f0f8ff; padding: 10px; border-radius: 5px; margin: 10px 0;'>
+<strong>📋 Standards Alignment:</strong><br>
+• <strong>F-IF.C.7c</strong>: Graph polynomial functions, identifying zeros and end behavior<br>
+• <strong>A-APR.A.1</strong>: Understand that polynomials form a system analogous to the integers<br>
+• <strong>F-BF.B.3</strong>: Identify the effect on the graph of replacing f(x) by f(x) + k
+</div>
 """)
