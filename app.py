@@ -145,7 +145,8 @@ if mode == "Zeros (roots)":
 # --- COEFFICIENT MODE ---
 else:
     st.subheader("✏️ Enter Coefficients of Your Polynomial")
-    st.markdown("Enter the coefficients of your polynomial in standard form: \\( ax^3 + bx^2 + cx + d \\)")
+    st.markdown("Enter the coefficients of your polynomial in standard form:")
+    st.latex(r"f(x) = ax^3 + bx^2 + cx + d")
 
     # Use sliders for real-time updates instead of number inputs
     col1, col2 = st.columns(2)
