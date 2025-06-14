@@ -2,7 +2,6 @@ import streamlit as st
 import plotly.graph_objects as go
 import numpy as np
 import matplotlib.pyplot as plt
-import sympy as sp
 
 # Page config
 st.set_page_config(page_title="MathCraft: Twisted Curves", layout="centered")
@@ -17,6 +16,89 @@ st.markdown("""
 <hr>
 """, unsafe_allow_html=True)
 
+# Helper function to create polynomial string from zeros
+def zeros_to_polynomial_string(zeros):
+    """Convert list of zeros to polynomial string representation"""
+    if len(zeros) == 2:
+        a, b = zeros
+        # (x-a)(x-b) = x² - (a+b)x + ab
+        coef_x2 = 1
+        coef_x1 = -(a + b)
+        coef_x0 = a * b
+        
+        terms = []
+        if coef_x2 != 0:
+            if coef_x2 == 1:
+                terms.append("x^2")
+            elif coef_x2 == -1:
+                terms.append("-x^2")
+            else:
+                terms.append(f"{coef_x2}x^2")
+        
+        if coef_x1 != 0:
+            if coef_x1 > 0 and terms:
+                terms.append(f"+{coef_x1}x" if coef_x1 != 1 else "+x")
+            elif coef_x1 < 0:
+                terms.append(f"{coef_x1}x" if coef_x1 != -1 else "-x")
+            else:
+                terms.append("x" if coef_x1 == 1 else f"{coef_x1}x")
+        
+        if coef_x0 != 0:
+            if coef_x0 > 0 and terms:
+                terms.append(f"+{coef_x0}")
+            else:
+                terms.append(f"{coef_x0}")
+        
+        return "".join(terms) if terms else "0"
+    
+    elif len(zeros) == 3:
+        a, b, c = zeros
+        # (x-a)(x-b)(x-c) expanded
+        coef_x3 = 1
+        coef_x2 = -(a + b + c)
+        coef_x1 = a*b + a*c + b*c
+        coef_x0 = -a*b*c
+        
+        terms = []
+        if coef_x3 != 0:
+            terms.append("x^3" if coef_x3 == 1 else f"{coef_x3}x^3")
+        
+        if coef_x2 != 0:
+            if coef_x2 > 0 and terms:
+                terms.append(f"+{coef_x2}x^2" if coef_x2 != 1 else "+x^2")
+            elif coef_x2 < 0:
+                terms.append(f"{coef_x2}x^2" if coef_x2 != -1 else "-x^2")
+            else:
+                terms.append("x^2" if coef_x2 == 1 else f"{coef_x2}x^2")
+        
+        if coef_x1 != 0:
+            if coef_x1 > 0 and terms:
+                terms.append(f"+{coef_x1}x" if coef_x1 != 1 else "+x")
+            elif coef_x1 < 0:
+                terms.append(f"{coef_x1}x" if coef_x1 != -1 else "-x")
+            else:
+                terms.append("x" if coef_x1 == 1 else f"{coef_x1}x")
+        
+        if coef_x0 != 0:
+            if coef_x0 > 0 and terms:
+                terms.append(f"+{coef_x0}")
+            else:
+                terms.append(f"{coef_x0}")
+        
+        return "".join(terms) if terms else "0"
+    
+    elif len(zeros) == 4:
+        # For 4 zeros, just show the factored form
+        factor_terms = []
+        for z in zeros:
+            if z >= 0:
+                factor_terms.append(f"(x-{z})")
+            else:
+                factor_terms.append(f"(x+{abs(z)})")
+        return "".join(factor_terms)
+    
+    return "Complex polynomial"
+
 # --- MODE SWITCH ---
 st.subheader("🛠️ Choose Input Mode")
 mode = st.radio("Do you want to control the graph using...", ["Zeros (roots)", "Polynomial coefficients"])
@@ -30,7 +112,7 @@ if mode == "Zeros (roots)":
     zeros = []
 
     if st.button("🔄 Reset Zeros to Default"):
-        st.experimental_rerun()
+        st.rerun()
 
     for i in range(num_factors):
         zero = st.slider(f"Zero {i+1} (x = root_{i+1})", -5.0, 5.0, default_zeros[i], step=0.1)
@@ -39,14 +121,12 @@ if mode == "Zeros (roots)":
     # Generate polynomial from roots
     t = np.linspace(-6, 6, 400)
     f_t = np.ones_like(t)
-    poly_expr = 1
-    x = sp.Symbol('x')
     for z in zeros:
         f_t *= (t - z)
-        poly_expr *= (x - z)
 
     # Display polynomial expression
-    st.latex(f"f(x) = {sp.expand(poly_expr)}")
+    poly_string = zeros_to_polynomial_string(zeros)
+    st.latex(f"f(x) = {poly_string}")
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=t, y=f_t, mode='lines', name='f(x)', line=dict(width=3)))
@@ -63,7 +143,7 @@ if mode == "Zeros (roots)":
 # --- COEFFICIENT MODE ---
 else:
     st.subheader("✏️ Enter Coefficients of Your Polynomial")
-    st.markdown("Enter the coefficients of your polynomial in standard form: \( ax^3 + bx^2 + cx + d \)")
+    st.markdown("Enter the coefficients of your polynomial in standard form: \\( ax^3 + bx^2 + cx + d \\)")
 
     a = st.number_input("a (x³)", value=1.0, step=0.1)
     b = st.number_input("b (x²)", value=0.0, step=0.1)
@@ -92,19 +172,19 @@ st.markdown("""
 - **Factors** are the algebraic expressions that produce these zeros.
 
 For example:
-- Zero at \( x = 1 \) → Factor is \( (x - 1) \)
-- Zero at \( x = -2 \) → Factor is \( (x + 2) \)
+- Zero at \\( x = 1 \\) → Factor is \\( (x - 1) \\)
+- Zero at \\( x = -2 \\) → Factor is \\( (x + 2) \\)
 
 They are connected, but not interchangeable.
 
-🧪 **Challenge:** What factor corresponds to a zero at \( x = 5 \)?
+🧪 **Challenge:** What factor corresponds to a zero at \\( x = 5 \\)?
 """)
 
 # --- EXTRA: Twisted S-Curve ---
 st.markdown("""
 <hr>
 <h2 style='color:#4B0082;'>🌀 Bonus: Twisting the S-Curve</h2>
-<p>What happens when we modify a simple cubic like \( -x^3 \) by adding a linear term like \( +x \)? Let's visualize it.</p>
+<p>What happens when we modify a simple cubic like \\( -x^3 \\) by adding a linear term like \\( +x \\)? Let's visualize it.</p>
 """, unsafe_allow_html=True)
 
 x = np.linspace(-4, 4, 400)
@@ -124,12 +204,12 @@ ax.grid(True)
 st.pyplot(fig2)
 
 st.markdown("""
-- The **orange dashed** curve is the original \( -x^3 \), a mirrored S-shape.
-- The **purple** curve shows \( -x^3 + x \), where the middle **twists**.
+- The **orange dashed** curve is the original \\( -x^3 \\), a mirrored S-shape.
+- The **purple** curve shows \\( -x^3 + x \\), where the middle **twists**.
 
 Think of it like this:
 - The **bottom right** of the curve is **coming toward you**.
 - The **top left** is **diving into the paper**.
 
-A small term like \( +x \) creates major shape changes near the origin.
+A small term like \\( +x \\) creates major shape changes near the origin.
 """)
