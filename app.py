@@ -147,13 +147,22 @@ else:
     st.subheader("✏️ Enter Coefficients of Your Polynomial")
     st.markdown("Enter the coefficients of your polynomial in standard form: \\( ax^3 + bx^2 + cx + d \\)")
 
-    a = st.number_input("a (x³)", value=1.0, step=0.1)
-    b = st.number_input("b (x²)", value=0.0, step=0.1)
-    c = st.number_input("c (x¹)", value=0.0, step=0.1)
-    d = st.number_input("d (constant)", value=0.0, step=0.1)
+    # Use sliders for real-time updates instead of number inputs
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        a = st.slider("a (x³)", min_value=-5.0, max_value=5.0, value=1.4, step=0.1, key="coef_a")
+        c = st.slider("c (x¹)", min_value=-5.0, max_value=5.0, value=0.9, step=0.1, key="coef_c")
+    
+    with col2:
+        b = st.slider("b (x²)", min_value=-5.0, max_value=5.0, value=1.4, step=0.1, key="coef_b")
+        d = st.slider("d (constant)", min_value=-10.0, max_value=10.0, value=4.7, step=0.1, key="coef_d")
 
-    # Define polynomial function
-    t = np.linspace(-6, 6, 400)
+    # Pre-compute x values once for performance
+    if 'x_values' not in st.session_state:
+        st.session_state.x_values = np.linspace(-6, 6, 400)
+    
+    t = st.session_state.x_values
     f_t = a*t**3 + b*t**2 + c*t + d
 
     # Display expression with better formatting
@@ -221,13 +230,30 @@ else:
     polynomial_display = format_polynomial_display(a, b, c, d)
     st.latex(f"f(x) = {polynomial_display}")
 
+    # Optimized plotting with fixed layout for performance
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=t, y=f_t, mode='lines', name='f(x)', line=dict(width=3)))
-    fig.update_layout(title="Graph of f(x) = ax³ + bx² + cx + d",
-                      xaxis_title="x",
-                      yaxis_title="f(x)",
-                      height=500)
-    st.plotly_chart(fig)
+    fig.add_trace(go.Scatter(
+        x=t, 
+        y=f_t, 
+        mode='lines', 
+        name='f(x)', 
+        line=dict(width=3, color='#1f77b4')
+    ))
+    
+    # Fixed layout prevents constant rescaling
+    fig.update_layout(
+        title="Graph of f(x) = ax³ + bx² + cx + d",
+        xaxis_title="x",
+        yaxis_title="f(x)",
+        height=500,
+        xaxis=dict(range=[-6, 6]),
+        yaxis=dict(range=[-300, 300]),
+        showlegend=False
+    )
+    
+    # Use container for smooth updates
+    chart_container = st.empty()
+    chart_container.plotly_chart(fig, use_container_width=True)
 
 # --- Concept Check ---
 st.subheader("🧠 Concept Check")
