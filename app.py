@@ -332,18 +332,24 @@ st.markdown("""
 Think of it like this:
 - The **bottom right** of the curve is **coming toward you**.
 - The **top left** is **diving into the paper**.
+""")
 
-A small term like \\( +x \\) creates major shape changes near the origin.
+st.latex(r"\text{A small term like } +x \text{ creates major shape changes near the origin.}")
 
+st.markdown("""
 ### 🎓 **Explore Further:**
 - 📖 [Khan Academy: Transforming polynomial functions](https://www.khanacademy.org/math/algebra2/x2ec2f6f830c9fb89:poly-graphs/x2ec2f6f830c9fb89:poly-end-behavior/v/polynomial-end-behavior)
 - 🎯 [IXL: Graph polynomial functions](https://www.ixl.com/math/algebra-2/graph-polynomial-functions)
 - 📊 [Khan Academy: End behavior of polynomial functions](https://www.khanacademy.org/math/algebra2/x2ec2f6f830c9fb89:poly-graphs/x2ec2f6f830c9fb89:poly-end-behavior/v/polynomial-end-behavior)
-
-<div style='background-color: #f0f8ff; padding: 10px; border-radius: 5px; margin: 10px 0;'>
-<strong>📋 Standards Alignment:</strong><br>
-• <strong>F-IF.C.7c</strong>: Graph polynomial functions, identifying zeros and end behavior<br>
-• <strong>A-APR.A.1</strong>: Understand that polynomials form a system analogous to the integers<br>
-• <strong>F-BF.B.3</strong>: Identify the effect on the graph of replacing f(x) by f(x) + k
-</div>
 """)
+
+st.markdown("""
+<div style='background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin: 15px 0;'>
+<h4 style='margin-top: 0; color: #2c3e50;'>📋 Standards Alignment</h4>
+""", unsafe_allow_html=True)
+
+st.latex(r"\textbf{F-IF.C.7c:} \text{ Graph polynomial functions, identifying zeros and end behavior}")
+st.latex(r"\textbf{A-APR.A.1:} \text{ Understand that polynomials form a system analogous to the integers}")  
+st.latex(r"\textbf{F-BF.B.3:} \text{ Identify the effect on the graph of replacing } f(x) \text{ by } f(x) + k")
+
+st.markdown("</div>", unsafe_allow_html=True)
