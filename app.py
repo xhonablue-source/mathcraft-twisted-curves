@@ -2,6 +2,7 @@ import streamlit as st
 import plotly.graph_objects as go
 import numpy as np
 import matplotlib.pyplot as plt
+import sympy as sp
 
 # Page config
 st.set_page_config(page_title="MathCraft: Twisted Curves", layout="centered")
@@ -16,51 +17,75 @@ st.markdown("""
 <hr>
 """, unsafe_allow_html=True)
 
-# --- INTERACTIVE ROOTS SECTION ---
-st.subheader("🎮 Move the Zeros - Watch the Polynomial Change")
+# --- MODE SWITCH ---
+st.subheader("🛠️ Choose Input Mode")
+mode = st.radio("Do you want to control the graph using...", ["Zeros (roots)", "Polynomial coefficients"])
 
-st.markdown("""
-Use the sliders below to move the x-intercepts (zeros) of the polynomial. You can also choose how many factors to include, and reset them back to default.
-""")
+# --- ZEROS MODE ---
+if mode == "Zeros (roots)":
+    st.subheader("🎮 Move the Zeros - Watch the Polynomial Change")
 
-# Select number of factors
-num_factors = st.selectbox("How many factors do you want?", [2, 3, 4], index=2)
+    num_factors = st.selectbox("How many factors do you want?", [2, 3, 4], index=2)
+    default_zeros = [-2.0, 1.0, 3.0, 4.0]
+    zeros = []
 
-# Default values
-default_zeros = [-2.0, 1.0, 3.0, 4.0]
-zeros = []
+    if st.button("🔄 Reset Zeros to Default"):
+        st.experimental_rerun()
 
-# Reset button
-if st.button("🔄 Reset Zeros to Default"):
-    st.experimental_rerun()
+    for i in range(num_factors):
+        zero = st.slider(f"Zero {i+1} (x = root_{i+1})", -5.0, 5.0, default_zeros[i], step=0.1)
+        zeros.append(zero)
 
-# Show sliders based on selected number of factors
-for i in range(num_factors):
-    zero = st.slider(f"Zero {i+1} (x = root_{i+1})", -5.0, 5.0, default_zeros[i], step=0.1)
-    zeros.append(zero)
+    # Generate polynomial from roots
+    t = np.linspace(-6, 6, 400)
+    f_t = np.ones_like(t)
+    poly_expr = 1
+    x = sp.Symbol('x')
+    for z in zeros:
+        f_t *= (t - z)
+        poly_expr *= (x - z)
 
-# Generate values
-t = np.linspace(-6, 6, 400)
-f_t = np.ones_like(t)
-for z in zeros:
-    f_t *= (t - z)
+    # Display polynomial expression
+    st.latex(f"f(x) = {sp.expand(poly_expr)}")
 
-# Plot dynamic polynomial
-fig = go.Figure()
-fig.add_trace(go.Scatter(x=t, y=f_t, mode='lines', name='f(x)', line=dict(width=3)))
-fig.add_trace(go.Scatter(x=zeros, y=[0]*len(zeros), mode='markers+text', name='Zeros',
-                         marker=dict(size=10, color='red'),
-                         text=[f"x = {round(z,1)}" for z in zeros],
-                         textposition='top center'))
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=t, y=f_t, mode='lines', name='f(x)', line=dict(width=3)))
+    fig.add_trace(go.Scatter(x=zeros, y=[0]*len(zeros), mode='markers+text', name='Zeros',
+                             marker=dict(size=10, color='red'),
+                             text=[f"x = {round(z,1)}" for z in zeros],
+                             textposition='top center'))
+    fig.update_layout(title="Graph of f(x) = Product of (x - root)",
+                      xaxis_title="x",
+                      yaxis_title="f(x)",
+                      height=500)
+    st.plotly_chart(fig)
 
-fig.update_layout(title="Graph of f(x) = Product of (x - root)",
-                  xaxis_title="x",
-                  yaxis_title="f(x)",
-                  height=500)
+# --- COEFFICIENT MODE ---
+else:
+    st.subheader("✏️ Enter Coefficients of Your Polynomial")
+    st.markdown("Enter the coefficients of your polynomial in standard form: \( ax^3 + bx^2 + cx + d \)")
 
-st.plotly_chart(fig)
+    a = st.number_input("a (x³)", value=1.0, step=0.1)
+    b = st.number_input("b (x²)", value=0.0, step=0.1)
+    c = st.number_input("c (x¹)", value=0.0, step=0.1)
+    d = st.number_input("d (constant)", value=0.0, step=0.1)
 
-# Explanation section
+    # Define polynomial function
+    t = np.linspace(-6, 6, 400)
+    f_t = a*t**3 + b*t**2 + c*t + d
+
+    # Display expression
+    st.latex(f"f(x) = {a}x^3 + {b}x^2 + {c}x + {d}")
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=t, y=f_t, mode='lines', name='f(x)', line=dict(width=3)))
+    fig.update_layout(title="Graph of f(x) = ax³ + bx² + cx + d",
+                      xaxis_title="x",
+                      yaxis_title="f(x)",
+                      height=500)
+    st.plotly_chart(fig)
+
+# --- Concept Check ---
 st.subheader("🧠 Concept Check")
 st.markdown("""
 - **Zeros** are the x-values where the graph touches or crosses the x-axis.
