@@ -117,7 +117,8 @@ if mode == "Zeros (roots)":
         st.rerun()
 
     for i in range(num_factors):
-        zero = st.slider(f"Zero {i+1} (x = root_{i+1})", -5.0, 5.0, default_zeros[i], step=0.1)
+        zero = st.slider(f"Zero {i+1}", -5.0, 5.0, default_zeros[i], step=0.1)
+        st.latex(f"x = {zero:g}")
         zeros.append(zero)
 
     # Generate polynomial from roots
@@ -133,9 +134,10 @@ if mode == "Zeros (roots)":
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=t, y=f_t, mode='lines', name='f(x)', line=dict(width=3)))
     fig.add_trace(go.Scatter(x=zeros, y=[0]*len(zeros), mode='markers+text', name='Zeros',
-                             marker=dict(size=10, color='red'),
-                             text=[f"x = {round(z,1)}" for z in zeros],
-                             textposition='top center'))
+                             marker=dict(size=12, color='red', symbol='circle'),
+                             text=[f"x = {z:g}" for z in zeros],
+                             textposition='top center',
+                             textfont=dict(size=14, color='red')))
     fig.update_layout(title="Graph of f(x) = Product of (x - root)",
                       xaxis_title="x",
                       yaxis_title="f(x)",
@@ -152,12 +154,16 @@ else:
     col1, col2 = st.columns(2)
     
     with col1:
-        a = st.slider("a (x³)", min_value=-5.0, max_value=5.0, value=1.4, step=0.1, key="coef_a")
-        c = st.slider("c (x¹)", min_value=-5.0, max_value=5.0, value=0.9, step=0.1, key="coef_c")
+        a = st.slider("a", min_value=-5.0, max_value=5.0, value=1.4, step=0.1, key="coef_a")
+        st.latex(f"a = {a:g}")
+        c = st.slider("c", min_value=-5.0, max_value=5.0, value=0.9, step=0.1, key="coef_c")
+        st.latex(f"c = {c:g}")
     
     with col2:
-        b = st.slider("b (x²)", min_value=-5.0, max_value=5.0, value=1.4, step=0.1, key="coef_b")
-        d = st.slider("d (constant)", min_value=-10.0, max_value=10.0, value=4.7, step=0.1, key="coef_d")
+        b = st.slider("b", min_value=-5.0, max_value=5.0, value=1.4, step=0.1, key="coef_b")
+        st.latex(f"b = {b:g}")
+        d = st.slider("d", min_value=-10.0, max_value=10.0, value=4.7, step=0.1, key="coef_d")
+        st.latex(f"d = {d:g}")
 
     # Pre-compute x values once for performance
     if 'x_values' not in st.session_state:
