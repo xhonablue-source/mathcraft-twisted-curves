@@ -343,13 +343,13 @@ st.markdown("""
 - 📊 [Khan Academy: End behavior of polynomial functions](https://www.khanacademy.org/math/algebra2/x2ec2f6f830c9fb89:poly-graphs/x2ec2f6f830c9fb89:poly-end-behavior/v/polynomial-end-behavior)
 """)
 
+# Clean standards box - properly formatted
 st.markdown("""
-<div style='background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin: 15px 0;'>
-<h4 style='margin-top: 0; color: #2c3e50;'>📋 Standards Alignment</h4>
+<div style='background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #4B0082;'>
+<h4 style='margin-top: 0; color: #2c3e50; font-family: serif;'>📋 Standards Alignment</h4>
+</div>
 """, unsafe_allow_html=True)
 
 st.latex(r"\textbf{F-IF.C.7c:} \text{ Graph polynomial functions, identifying zeros and end behavior}")
 st.latex(r"\textbf{A-APR.A.1:} \text{ Understand that polynomials form a system analogous to the integers}")  
 st.latex(r"\textbf{F-BF.B.3:} \text{ Identify the effect on the graph of replacing } f(x) \text{ by } f(x) + k")
-
-st.markdown("</div>", unsafe_allow_html=True)
